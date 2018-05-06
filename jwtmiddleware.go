@@ -23,6 +23,12 @@ func New(secret string) gin.HandlerFunc {
 
 			return []byte(secret), nil
 		})
+		if err != nil {
+			fmt.Println(err)
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Unauthorized",
+			})
+		}
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			c.Set("Claims", claims)
