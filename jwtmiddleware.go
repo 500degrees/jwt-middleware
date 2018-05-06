@@ -1,7 +1,6 @@
 package jwtmiddleware
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -19,39 +18,41 @@ func New(secret string) gin.HandlerFunc {
 		if len(parts) <= 1 {
 			log.Println("Authorization header not present")
 			c.JSON(http.StatusUnauthorized, gin.H{
-				"message": "sdsddsUnauthorized",
+				"message": "Unauthorized",
 			})
 			c.Abort()
 			return
 		}
 		tokenString := parts[1]
 		log.Println("TOKEN:", tokenString)
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			// Don't forget to validate the alg is what you expect:
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				log.Println("wrong signing method")
-				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
-			}
 
+		type TokenClaims struct {
+			ID    string `json:"id,omitempty"`
+			Email string `json:"email"`
+			jwt.StandardClaims
+		}
+
+		token, err := jwt.ParseWithClaims(tokenString, &TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 			return []byte(secret), nil
 		})
+
 		if err != nil {
 			log.Printf("error parsing token: %v", err)
 			c.JSON(http.StatusUnauthorized, gin.H{
-				"message": "sdsdadsUnauthorized",
+				"message": "Unauthorized",
 			})
 			c.Abort()
 			return
 		}
 
-		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		if claims, ok := token.Claims.(TokenClaims); ok && token.Valid {
 			log.Printf("setting claims: %v", claims)
 			c.Set("Claims", claims)
 			c.Next()
 		} else {
-			log.Println("something weird: %v", err)
+			log.Printf("something weird: %v", err)
 			c.JSON(http.StatusUnauthorized, gin.H{
-				"message": "asdasdUnauthorized",
+				"message": "Unauthorized",
 			})
 			c.Abort()
 		}
