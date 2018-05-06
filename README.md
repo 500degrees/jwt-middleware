@@ -1,2 +1,2 @@
 # jwt-middleware
-A repository for parsing JWT tokens
+A middleware for GIN to parse JWT tokens
