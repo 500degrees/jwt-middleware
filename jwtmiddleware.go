@@ -10,7 +10,7 @@ import (
 )
 
 // New creates a jwtmiddleware to parse JWT tokens from the Authorization header
-func New(secret string, method interface{}) gin.HandlerFunc {
+func New(secret string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.Request.Header.Get("Authorization")
 		parts := strings.Split(authHeader, " ")
