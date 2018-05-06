@@ -19,11 +19,13 @@ func New(secret string) gin.HandlerFunc {
 		if len(parts) <= 1 {
 			log.Println("Authorization header not present")
 			c.JSON(http.StatusUnauthorized, gin.H{
-				"message": "Unauthorized",
+				"message": "sdsddsUnauthorized",
 			})
 			c.Abort()
+			return
 		}
 		tokenString := parts[1]
+		log.Println("TOKEN:", tokenString)
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			// Don't forget to validate the alg is what you expect:
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -36,9 +38,10 @@ func New(secret string) gin.HandlerFunc {
 		if err != nil {
 			log.Printf("error parsing token: %v", err)
 			c.JSON(http.StatusUnauthorized, gin.H{
-				"message": "Unauthorized",
+				"message": "sdsdadsUnauthorized",
 			})
 			c.Abort()
+			return
 		}
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
@@ -48,7 +51,7 @@ func New(secret string) gin.HandlerFunc {
 		} else {
 			log.Println("something weird: %v", err)
 			c.JSON(http.StatusUnauthorized, gin.H{
-				"message": "Unauthorized",
+				"message": "asdasdUnauthorized",
 			})
 			c.Abort()
 		}
