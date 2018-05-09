@@ -35,6 +35,13 @@ func TestJWTMiddleware(t *testing.T) {
 	t.Log(req)
 	assert.Equal(t, http.StatusOK, w.Code, "should be authorized if Authorization header present with correct token")
 
+	w = httptest.NewRecorder()
+	req, _ = http.NewRequest("GET", "/test_auth", nil)
+	req.Header.Add("Authorization", "JWT")
+	router.ServeHTTP(w, req)
+	t.Log(req)
+	assert.Equal(t, http.StatusUnauthorized, w.Code, "should be not be unauthorized if Authorization header missing parts")
+
 }
 
 func setupRouter(m gin.HandlerFunc) *gin.Engine {
