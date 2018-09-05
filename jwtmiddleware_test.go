@@ -10,16 +10,15 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"gitlab.com/500degrees/basketball-tracker/services/auth/models"
 )
 
 const secret = "test_secret"
 
 func TestJWTMiddleware(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	conf := Config {
-		Secret : secret,
-		ExtractJwt : FROM_AUTH_HEADER_BEAREN_TOKEN,
+	conf := Config{
+		Secret:     secret,
+		ExtractJwt: FROM_AUTH_HEADER_BEAREN_TOKEN,
 	}
 	middleware := New(conf)
 	router := setupRouter(middleware)
@@ -59,12 +58,11 @@ func setupRouter(m gin.HandlerFunc) *gin.Engine {
 
 func getToken() string {
 	// Create the Claims
-	claims := models.TokenClaims{
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Minute * 2).Unix(),
-			Issuer:    "issuer",
-		},
+	claims := jwt.StandardClaims{
+		ExpiresAt: time.Now().Add(time.Minute * 2).Unix(),
+		Issuer:    "issuer",
 	}
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	ss, err := token.SignedString([]byte(secret))
 	if err != nil {
