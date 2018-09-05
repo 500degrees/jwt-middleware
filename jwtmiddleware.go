@@ -18,8 +18,6 @@ const (
 
 type Config struct {
 
-	Callback func(r *http.Request, claims jwt.Claims) bool
-
 	Secret string
 
 	ExtractJwt ExtractorType
@@ -69,7 +67,6 @@ func New(conf Config) gin.HandlerFunc {
 
 		if token.Valid {
 			c.Set("TokenClaims", token.Claims)
-			if conf.Callback != nil { conf.Callback(c.Request, token.Claims) }
 			c.Next()
 		} else {
 			log.Printf("Invalid token: %v, %v", err, token.Valid)
