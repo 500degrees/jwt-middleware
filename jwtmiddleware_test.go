@@ -16,11 +16,11 @@ const secret = "test_secret"
 
 func TestJWTMiddleware(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	conf := Config{
-		Secret:     secret,
-		ExtractJwt: FROM_AUTH_HEADER_BEAREN_TOKEN,
+	con := Config{
+		Secret:          secret,
+		ExtractStrategy: ExtractFromAuthHeader(),
 	}
-	middleware := New(conf)
+	middleware := New(con)
 	router := setupRouter(middleware)
 
 	w := httptest.NewRecorder()
